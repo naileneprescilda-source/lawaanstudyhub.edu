@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Lawaan Study Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Poppins:wght@700&family=Roboto+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',sans-serif;background:linear-gradient(120deg,#e6d9ff,#f8f0ff);color:#2e1a47;padding:20px;}
+header{font-family:'Poppins',sans-serif;font-weight:700;font-size:2rem;text-align:center;margin-bottom:25px;position:relative;z-index:10;}
+.nav{display:flex;justify-content:center;gap:15px;margin-bottom:25px;position:relative;z-index:10;}
+.nav button{padding:12px 24px;border-radius:12px;border:none;background:#5a2d82;color:white;font-weight:600;cursor:pointer;transition:0.2s;z-index:10;}
+.nav button:hover{background:#6f3fa1;transform:translateY(-3px) scale(1.05);box-shadow:0 6px 15px rgba(0,0,0,0.2);}
+
+.section{display:none;max-width:1000px;margin:auto;padding:25px;background:rgba(255,255,255,0.95);border-radius:24px;box-shadow:0 15px 40px rgba(0,0,0,0.12);position:relative;z-index:1;}
+.section.active{display:block;}
+h2{text-align:center;margin-bottom:15px;font-family:'Poppins',sans-serif;}
+
+/* Pomodoro */
+.timer{font-family:'Roboto Mono', monospace;font-size:4rem;text-align:center;margin:20px 0;}
+.pomo-controls{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:10px;}
+.pomo-controls button{padding:10px 14px;border-radius:10px;border:none;background:#5a2d82;color:white;font-weight:600;cursor:pointer;box-shadow:0 4px 10px rgba(0,0,0,0.1);transition:0.2s;}
+.pomo-controls button:hover{background:#6f3fa1;transform:translateY(-2px) scale(1.05);box-shadow:0 6px 15px rgba(0,0,0,0.2);}
+.tomatoes{text-align:center;font-size:1.6rem;margin-top:5px;}
+.progress-bar{height:10px;background:#cbb3ff;border-radius:5px;overflow:hidden;margin:10px 0;}
+.progress{height:100%;width:0%;background:#5a2d82;transition:width 1s linear;}
+
+/* To-Do */
+.todo-box{max-width:500px;margin:auto;display:flex;flex-direction: column;gap:10px;}
+.todo-box input{width:100%;padding:10px;border-radius:10px;border:1px solid #ccc;font-size:1rem;transition:0.3s;}
+.todo-box input:focus{border-color:#5a2d82;box-shadow:0 0 6px rgba(90,45,130,0.4);outline:none;}
+.todo-box button{align-self:flex-start;padding:8px 12px;border:none;border-radius:8px;background:#5a2d82;color:white;font-weight:600;cursor:pointer;box-shadow:0 3px 6px rgba(0,0,0,0.1);transition:0.2s;}
+.todo-box button:hover{background:#6f3fa1;transform:scale(1.05) translateY(-2px);box-shadow:0 6px 12px rgba(0,0,0,0.2);}
+ul{list-style:none;padding:0;margin-top:10px;}
+li{background:#eee;padding:10px;border-radius:8px;display:flex;justify-content:space-between;align-items:center;gap:6px;font-size:1rem;transition: all 0.3s ease;}
+li.done span{text-decoration:line-through;opacity:0.6;color:#6b6b6b;}
+
+/* Flashcards */
+.flashcards{display:flex;flex-wrap:wrap;justify-content:center;gap:15px;margin-top:20px;min-height:320px;position:relative;}
+.flashcard{perspective:1000px;width:220px;height:280px;position:relative;transition: transform 0.6s, opacity 0.6s;cursor:pointer;opacity:0; transform: translateY(-50px);}
+.card-inner{width:100%;height:100%;position:relative;transition: transform 0.6s;transform-style: preserve-3d;}
+.flashcard.flipped .card-inner{transform:rotateY(180deg);}
+.card{position:absolute;inset:0;border-radius:16px;display:flex;flex-direction:column;justify-content:center;align-items:center;backface-visibility:hidden;box-shadow:0 5px 15px rgba(0,0,0,0.12);font-family:'Inter',sans-serif;transition: transform 0.3s;}
+.front{background:linear-gradient(145deg,#fff,#e6d9ff);border:2px solid #5a2d82;}
+.back{background:linear-gradient(145deg,#d9c6ff,#cbb3ff);transform:rotateY(180deg);border:2px solid #5a2d82;}
+.card-content{padding:15px;text-align:center;font-weight:600;font-size:1rem;}
+.card-buttons{margin-top:10px;display:flex;gap:5px;}
+.card-buttons button{padding:6px 10px;border:none;border-radius:6px;background:#5a2d82;color:white;font-weight:600;cursor:pointer;transition:0.2s;}
+.card-buttons button:hover{background:#6f3fa1;transform:scale(1.05);}
+.flashcard:hover{transform: perspective(1000px) rotateY(5deg) rotateX(3deg);}
+
+/* About Us */
+.about-box{
+  background:linear-gradient(135deg,#e6d9ff,#cbb3ff);
+  padding:20px;
+  border-radius:20px;
+  margin:10px auto;
+  max-width:600px;
+  text-align:center;
+  box-shadow:0 8px 20px rgba(0,0,0,0.2);
+}
+.about-box h3{margin:10px 0; color:#2e1a47;}
+.about-box p{margin:5px 0;}
+</style>
+</head>
+<body>
+
+<header>Lawaan Study Hub</header>
+
+<div class="nav">
+  <button onclick="showSection('pomodoro')">Pomodoro</button>
+  <button onclick="showSection('todo')">To-Do</button>
+  <button onclick="showSection('flashcards')">Flashcards</button>
+  <button onclick="showSection('about')">About Us</button>
+</div>
+
+<!-- Sections -->
+<div id="pomodoro" class="section active">
+  <h2>Pomodoro Timer</h2>
+  <div class="timer" id="timer">25:00</div>
+  <div class="progress-bar"><div class="progress" id="progress"></div></div>
+  <div class="pomo-controls">
+    <button onclick="startTimer()">Start</button>
+    <button onclick="pauseTimer()">Pause</button>
+    <button onclick="resumeTimer()">Resume</button>
+    <button onclick="resetTimer()">Reset</button>
+    <button onclick="setBreak(5)">5 min Break</button>
+    <button onclick="setBreak(10)">10 min Break</button>
+  </div>
+  <div class="tomatoes" id="tomatoes">🍅 0</div>
+</div>
+
+<div id="todo" class="section">
+  <h2>To-Do List</h2>
+  <div class="todo-box">
+    <input id="todoInput" placeholder="Add a task">
+    <button id="addBtn">Add</button>
+    <ul id="todoList"></ul>
+  </div>
+</div>
+
+<div id="flashcards" class="section">
+  <h2>Flashcards</h2>
+  <input id="q" placeholder="Question">
+  <input id="a" placeholder="Answer">
+  <button onclick="addFlashcard()">Add Card</button>
+  <button onclick="shuffleDeck()">Shuffle Deck</button>
+  <div class="flashcards" id="cardContainer"></div>
+</div>
+
+<div id="about" class="section">
+  <h2>About Us</h2>
+  <div class="about-box">
+    <h3>Authors</h3>
+    <p>🎓 Mc O Neal E. Barcenas</p>
+    <p>🎨 Princess Nailene J. Prescilda</p>
+    <p>💡 Jurelyn G. Simangan</p>
+    <h3>Published On</h3>
+    <p id="pubDate"></p>
+    <h3>Our Mission</h3>
+    <p>Make studying organized, fun, and colorful! 🌈📚</p>
+  </div>
+</div>
+
+<script>
+// Navigation
+function showSection(id){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+// Pomodoro
+let time=1500, timer=null, tomatoes=0;
+function updateTimer(){
+  const m=String(Math.floor(time/60)).padStart(2,'0');
+  const s=String(time%60).padStart(2,'0');
+  document.getElementById('timer').textContent=`${m}:${s}`;
+  document.getElementById('progress').style.width=((1500-time)/1500*100)+'%';
+}
+function startTimer(){if(timer) return; timer=setInterval(()=>{if(time>0){time--;updateTimer();}else{clearInterval(timer);timer=null;tomatoes++;document.getElementById('tomatoes').textContent="🍅 "+tomatoes;time=1500;updateTimer();alert("Pomodoro Complete!");}},1000);}
+function pauseTimer(){clearInterval(timer);timer=null;}
+function resumeTimer(){if(!timer) startTimer();}
+function resetTimer(){clearInterval(timer);timer=null;time=1500;tomatoes=0;updateTimer();document.getElementById('tomatoes').textContent="🍅 0";document.getElementById('progress').style.width='0%';}
+function setBreak(min){clearInterval(timer);timer=null;time=min*60;updateTimer();}
+updateTimer();
+
+// To-Do
+const input=document.getElementById('todoInput');
+const addBtn=document.getElementById('addBtn');
+const list=document.getElementById('todoList');
+addBtn.addEventListener('click',addTodo);
+input.addEventListener('keydown', e=>{if(e.key==='Enter') addTodo();});
+function addTodo(){
+  const task=input.value.trim();
+  if(!task) return;
+  const li=document.createElement('li');
+  const span=document.createElement('span'); span.textContent=task;
+  const done=document.createElement('button'); done.textContent='Done'; done.onclick=()=>li.classList.toggle('done');
+  const edit=document.createElement('button'); edit.textContent='Edit'; edit.onclick=()=>{const t=prompt('Edit task:',span.textContent); if(t!==null&&t.trim()!=='') span.textContent=t.trim();}
+  const del=document.createElement('button'); del.textContent='Delete'; del.onclick=()=>li.remove();
+  li.appendChild(span); li.appendChild(done); li.appendChild(edit); li.appendChild(del);
+  list.appendChild(li); input.value=''; input.focus();
+}
+
+// Flashcards
+const cardContainer=document.getElementById('cardContainer');
+let flashcardsArray=[];
+function addFlashcard(){
+  const qv=document.getElementById('q').value.trim();
+  const av=document.getElementById('a').value.trim();
+  if(!qv||!av) return;
+  const card=document.createElement('div'); card.className='flashcard';
+  card.innerHTML=`<div class="card-inner">
+    <div class="card front"><div class="card-content">${qv}</div>
+      <div class="card-buttons">
+        <button onclick="editCard(this)">Edit</button>
+        <button onclick="deleteCard(this)">Delete</button>
+      </div>
+    </div>
+    <div class="card back"><div class="card-content">${av}</div></div>
+  </div>`;
+  card.onclick=()=>card.classList.toggle('flipped');
+  flashcardsArray.push(card);
+  cardContainer.appendChild(card);
+  setTimeout(()=>{card.style.opacity=1; card.style.transform='translateY(0)';},50);
+  document.getElementById('q').value=''; document.getElementById('a').value='';
+}
+function shuffleDeck(){flashcardsArray.sort(()=>Math.random()-.5); cardContainer.innerHTML=''; flashcardsArray.forEach(c=>cardContainer.appendChild(c));}
+function editCard(btn){
+  const card=btn.closest('.flashcard');
+  const front=card.querySelector('.front .card-content');
+  const back=card.querySelector('.back .card-content');
+  const newQ=prompt('Edit Question:',front.textContent);
+  if(newQ!==null && newQ.trim()!=='') front.textContent=newQ.trim();
+  const newA=prompt('Edit Answer:',back.textContent);
+  if(newA!==null && newA.trim()!=='') back.textContent=newA.trim();
+}
+function deleteCard(btn){
+  const card=btn.closest('.flashcard');
+  card.remove();
+  flashcardsArray=flashcardsArray.filter(c=>c!==card);
+}
+
+// About Us date
+document.getElementById('pubDate').textContent=new Date().toLocaleDateString();
+</script>
+</body>
+</html>
